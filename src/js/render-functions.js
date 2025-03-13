@@ -1,12 +1,14 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
-import { refs } from "./refs";
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+import { refs } from './refs';
 
-export const renderImages = (images) => {
-    const gallery = refs.gallery;
-    gallery.innerHTML = images.map(image =>
-         ` <li class="gallery-item">
-          <a class="galery-link" href="${image.webUrl}"> <img src="${image.imgUrl}" alt="${image.alt}" /></a>
+export const renderImages = images => {
+  const gallery = refs.gallery;
+  const galleryItems = images
+    .map(
+      image =>
+        ` <li class="gallery-item">
+          <a class="gallery-link" href="${image.webformatURL}"> <img class="gallery-img" src="${image.largeImageURL}" alt="${image.tags}" /></a>
           <table>
            <table>
             <tr>
@@ -23,11 +25,14 @@ export const renderImages = (images) => {
             </tr>
           </table>
         </li>`
-    ).join('');    
-   
-const lightbox = new SimpleLightbox('.gallery a', {
+    )
+    .join('');
+
+  gallery.insertAdjacentHTML('beforeend', galleryItems);
+
+  const lightbox = new SimpleLightbox('.gallery a', {
     captionData: 'alt',
     captionDelay: 250,
-});
-lightbox.refresh();
+  });
+  lightbox.refresh();
 };
