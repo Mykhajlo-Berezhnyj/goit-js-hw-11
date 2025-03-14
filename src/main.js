@@ -5,6 +5,8 @@ import { refs } from './js/refs';
 import { renderImages } from './js/render-functions';
 import iconError from './img/error.svg';
 import { showLoader, hideLoader } from './js/loader';
+import { scrollShow, scrollToTop } from './js/scroll-to-top';
+
 
 let page = 1;
 let isLoading = false;
@@ -21,7 +23,7 @@ refs.form.addEventListener('input', () => {
       message: 'Sorry, the input cannot be empty or contain only spaces!',
       position: 'bottomLeft',
       maxWidth: 300,
-      timeout: 1000,
+      timeout: 1500,
     });
   } else {
     refs.btnSearch.removeAttribute('disabled');
@@ -73,7 +75,7 @@ const loadImages = () => {
             title: 'End of results',
             message: 'You have reached the end of the search results!',
             position: 'bottomRight',
-            backgroundColor: '#4e75ff',
+            backgroundColor: '#ff3d00',
             messageColor: '#FAFAFB',
           });
         }
@@ -101,3 +103,6 @@ const loadScroll = () => {
   }
 };
 window.addEventListener('scroll', loadScroll);
+
+window.addEventListener('scroll', scrollShow);
+refs.btnScrollUp.addEventListener('click', scrollToTop);
