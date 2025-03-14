@@ -99,7 +99,7 @@ const loadImages = () => {
       iziToast.error({
         title: 'error',
         message: error.message || 'Something went wrong. Please try again.',
-        position: 'topRight',
+        
       });
     })
     .finally(() => {
