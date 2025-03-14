@@ -13,6 +13,7 @@ let isLoading = false;
 let currentQuery = '';
 let totalHits = 0;
 
+/*
 refs.form.addEventListener('input', () => {
   const queryInput = refs.inputQuery.value.trim();
   if (queryInput === '') {
@@ -29,17 +30,28 @@ refs.form.addEventListener('input', () => {
     refs.btnSearch.removeAttribute('disabled');
   }
 });
+*/
+
 
 refs.form.addEventListener('submit', event => {
-  event.preventDefault();
+    event.preventDefault();
+
   const query = refs.inputQuery.value.trim();
-  currentQuery = query;
-  if (query) {
+  if (!query) {
+     iziToast.warning({
+      title: 'Caution',
+      message: 'The form cannot be empty! Please check and fill it out.',
+      position: 'topRight',
+      maxWidth: 300,
+     });
+      refs.inputQuery.value = '';
+      return;
+    }
+    currentQuery = query;
     page = 1;
     refs.gallery.innerHTML = '';
     loadImages();
-  }
-  refs.inputQuery.value = '';
+    refs.inputQuery.value = '';
 });
 
 const loadImages = () => {
@@ -85,8 +97,8 @@ const loadImages = () => {
     .catch(error => {
       console.error('Error:', error);
       iziToast.error({
-        title: error,
-        message: 'Something went wrong. Please try again.',
+        title: 'error',
+        message: error.message || 'Something went wrong. Please try again.',
         position: 'topRight',
       });
     })
@@ -96,6 +108,9 @@ const loadImages = () => {
     });
 };
 const loadScroll = () => {
+    if (isLoading) {
+        return;
+    }
   const scrollPosition = window.scrollY + window.innerHeight;
   const pageHeight = document.documentElement.scrollHeight;
   if (scrollPosition >= pageHeight - 350 && (page - 1) * 21 < totalHits) {

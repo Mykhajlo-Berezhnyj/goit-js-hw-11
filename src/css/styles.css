@@ -67,7 +67,7 @@ form input:active {
 
 
 .loader {
-  position: relative;
+  position: fixed;
   left: 50%;
   transform: translate(0, -50%);
   margin: 0, auto;
