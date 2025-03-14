@@ -17,7 +17,7 @@ export const fetchImages = (query, page = 1) => {
       },
     })
     .then(response => {
-      return response.data.hits;
+      return response.data;
     })
 
     .catch(error => {

@@ -9,29 +9,29 @@ import { showLoader, hideLoader } from './js/loader';
 let page = 1;
 let isLoading = false;
 let currentQuery = '';
+let totalHits = 0;
 
 refs.form.addEventListener('input', () => {
-    const queryInput = refs.inputQuery.value.trim();
+  const queryInput = refs.inputQuery.value.trim();
   if (queryInput === '') {
-      refs.btnSearch.setAttribute('disabled', true);
-      refs.inputQuery.value = '';
-      iziToast.warning({
-          title: 'Caution',
-          message:
-            'Sorry, the input cannot be empty or contain only spaces!',
-           position: 'bottomLeft',
-          maxWidth: 300,
-          timeout: 1000,
-        });
+    refs.btnSearch.setAttribute('disabled', true);
+    refs.inputQuery.value = '';
+    iziToast.warning({
+      title: 'Caution',
+      message: 'Sorry, the input cannot be empty or contain only spaces!',
+      position: 'bottomLeft',
+      maxWidth: 300,
+      timeout: 1000,
+    });
   } else {
-  refs.btnSearch.removeAttribute('disabled');
+    refs.btnSearch.removeAttribute('disabled');
   }
 });
 
 refs.form.addEventListener('submit', event => {
   event.preventDefault();
-    const query = refs.inputQuery.value.trim();
-    currentQuery = query;
+  const query = refs.inputQuery.value.trim();
+  currentQuery = query;
   if (query) {
     page = 1;
     refs.gallery.innerHTML = '';
@@ -47,9 +47,11 @@ const loadImages = () => {
   isLoading = true;
   showLoader();
   fetchImages(currentQuery, page)
-    .then(images => {
+    .then(data => {
+      const images = data.hits;
+      totalHits = data.totalHits;
       if (images.length === 0) {
-         iziToast.error({
+        iziToast.error({
           message:
             ' Sorry, there are no images matching your search query.Please try again!',
           messageColor: '#FAFAFB',
@@ -62,23 +64,39 @@ const loadImages = () => {
           theme: 'dark',
           iconUrl: iconError,
         });
+        return;
       } else {
         renderImages(images);
+        const totalLoadImages = (page - 1) * 21 + images.length;
+        if (totalLoadImages >= totalHits) {
+          iziToast.info({
+            title: 'End of results',
+            message: 'You have reached the end of the search results!',
+            position: 'bottomRight',
+            backgroundColor: '#4e75ff',
+            messageColor: '#FAFAFB',
+          });
+        }
         page += 1;
       }
     })
     .catch(error => {
       console.error('Error:', error);
+      iziToast.error({
+        title: error,
+        message: 'Something went wrong. Please try again.',
+        position: 'topRight',
+      });
     })
     .finally(() => {
-        isLoading = false;
-        hideLoader();     
+      isLoading = false;
+      hideLoader();
     });
 };
 const loadScroll = () => {
   const scrollPosition = window.scrollY + window.innerHeight;
   const pageHeight = document.documentElement.scrollHeight;
-  if (scrollPosition >= pageHeight - 200) {
+  if (scrollPosition >= pageHeight - 350 && (page - 1) * 21 < totalHits) {
     loadImages();
   }
 };
